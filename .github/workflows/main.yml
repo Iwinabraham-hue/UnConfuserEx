@@ -1,26 +1,26 @@
-name: Compile UnConfuserEx Online
+name: Compile Standalone UnConfuserEx
 
 on:
-  workflow_dispatch: # Allows you to trigger the build manually with a button
+  workflow_dispatch: # Gives you a button to start the build manually
 
 jobs:
-  build:
+  publish:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout Code
+    - name: Get Code Files
       uses: actions/checkout@v4
 
-    - name: Setup .NET
+    - name: Set Up Modern .NET Environment
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x' # Uses the standard modern .NET compilation environment
+        dotnet-version: '9.0.x' # Deploys the requested version in the cloud
 
-    - name: Build Solution
-      run: dotnet build --configuration Release
+    - name: Build Standalone Executable
+      run: dotnet publish UnConfuserEx/UnConfuserEx.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true
 
-    - name: Upload Executable Artifact
+    - name: Save Finished Binary
       uses: actions/upload-artifact@v4
       with:
-        name: Built-UnConfuserEx
-        path: "**/bin/Release/**"
+        name: Standalone-UnConfuserEx
+        path: "**/bin/Release/**/publish/UnConfuserEx.exe"
